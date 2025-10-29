@@ -67,7 +67,7 @@ jobs:
       run: go test -v ./...
 
     - name: Report tests check
-      if: ${{ steps.tests-step.outcome }}
+      if: success() || failure()
       uses: actions/github-script@v3
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
