@@ -83,7 +83,7 @@ jobs:
             details_url: '${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}',
             output: {
               title: 'Run tests',
-              summary: 'Results: ${{ steps.tests-step.outcome }}\n\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}';
+              summary: 'Results: ${{ steps.tests-step.outcome }}\n\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'
             },
             ...context.repo
           })
