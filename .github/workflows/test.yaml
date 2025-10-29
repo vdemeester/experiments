@@ -19,7 +19,7 @@ jobs:
     steps:
     - name: Set PR variables
       id: pr
-      uses: actions/github-script@v8a
+      uses: actions/github-script@v8
       with:
         script: |
           const pr = await github.rest.pulls.get({
