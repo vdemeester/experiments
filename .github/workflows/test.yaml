@@ -49,6 +49,7 @@ jobs:
             name: 'run tests',
             head_sha: '${{ needs.run-if-requested.outputs.sha }}',
             status: 'in_progress',
+            details_url: '${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}',
             ...context.repo
           })
           return { id: check.data.id }
@@ -73,7 +74,7 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
-          const resp = await agithub.rest.checks.update({
+          const resp = await github.rest.checks.update({
             name: 'run tests',
             check_run_id: ${{ fromJSON(steps.check-run.outputs.result).id }},
             head_sha: '${{ needs.run-if-requested.outputs.sha }}',
