@@ -14,12 +14,12 @@ defaults:
 
 jobs:
   run-if-requested:
-    if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, '/run-backcompat-e2e') }}
+    if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, '/run-tests') }}
     runs-on: ubuntu-latest
     steps:
     - name: Set PR variables
       id: pr
-      uses: actions/github-script@60a0d83039c74a4aee5e5cbf49f72e2045aa4292 # v7.0.1
+      uses: actions/github-script@v8
       with:
         script: |
           const pr = await github.rest.pulls.get({
@@ -32,6 +32,8 @@ jobs:
       sha: ${{ steps.pr.outputs.sha }}
 
   tests:
+    needs: [run-if-requested]
+    if: ${{ needs.run-if-requested.result == 'success' }}
     name: "tests"
     runs-on: ubuntu-latest
     steps:
