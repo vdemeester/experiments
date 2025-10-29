@@ -41,16 +41,17 @@ jobs:
 
     - name: Report tests check
       uses: actions/github-script@v8
+      id: check-run
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
-          github.rest.checks.create({
+          const check = await github.rest.checks.create({
             name: 'run tests',
             head_sha: '${{ needs.run-if-requested.outputs.sha }}',
             status: 'in_progress',
-            owner: context.repo.owner,
-            repo: context.repo.repo
+            ...context.repo
           })
+          return { id: check.data.id }
 
     - name: Check out code
       uses: actions/checkout@v4
@@ -72,8 +73,9 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
-          github.rest.checks.create({
+          const resp = await agithub.rest.checks.update({
             name: 'run tests',
+            check_run_id: ${{ fromJSON(steps.check-run.outputs.result).id }},
             head_sha: '${{ needs.run-if-requested.outputs.sha }}',
             status: 'completed',
             conclusion: '${{ steps.tests-step.outcome }}',
@@ -81,6 +83,8 @@ jobs:
               title: 'Run tests',
               summary: 'Results: ${{ steps.tests-step.outcome }}'
             },
-            owner: context.repo.owner,
-            repo: context.repo.repo
+            ...context.repo
           })
+          aconsole.log(`Check run create response: ${resp.status}`)
+          console.log(`Check run URL: ${resp.data.url}`)
+          console.log(`Check run HTML: ${resp.data.html_url}`)
