@@ -19,7 +19,7 @@ jobs:
     steps:
     - name: Set PR variables
       id: pr
-      uses: actions/github-script@v8
+      uses: actions/github-script@v8a
       with:
         script: |
           const pr = await github.rest.pulls.get({
@@ -46,4 +46,24 @@ jobs:
         go-version: '1.24'
 
     - name: Test
+      id: test-step
       run: go test -v ./...
+
+    - name: Report tests check
+      if: ${{ github.event.inputs.used-branch && steps.tests-step.outcome }}
+      uses: actions/github-script@v3
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          github.checks.create({
+            name: 'run tests',
+            head_sha: '${{ needs.run-if-requested.outputs.sha }}',
+            status: 'completed',
+            conclusion: '${{ steps.tests-step.outcome }}',
+            output: {
+              title: 'Run tests',
+              summary: 'Results: ${{ steps.tests-step.outcome }}'
+            },
+            owner: context.repo.owner,
+            repo: context.repo.repo
+          })
