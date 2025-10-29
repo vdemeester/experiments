@@ -3,7 +3,7 @@ package main
 import "testing"
 
 func TestGetMessage(t *testing.T) {
-	expected := "Hello, World!"
+	expected := "Hello, World! This is me!"
 	result := getMessage()
 	if result != expected {
 		t.Errorf("getMessage() = %q, want %q", result, expected)
