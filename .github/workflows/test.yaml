@@ -80,12 +80,13 @@ jobs:
             head_sha: '${{ needs.run-if-requested.outputs.sha }}',
             status: 'completed',
             conclusion: '${{ steps.tests-step.outcome }}',
+            details_url: '${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}',
             output: {
               title: 'Run tests',
               summary: 'Results: ${{ steps.tests-step.outcome }}'
             },
             ...context.repo
           })
-          aconsole.log(`Check run create response: ${resp.status}`)
+          console.log(`Check run create response: ${resp.status}`)
           console.log(`Check run URL: ${resp.data.url}`)
           console.log(`Check run HTML: ${resp.data.html_url}`)
