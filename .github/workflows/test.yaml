@@ -43,7 +43,7 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
-          github.checks.create({
+          github.rest.checks.create({
             name: 'run tests',
             head_sha: '${{ needs.run-if-requested.outputs.sha }}',
             status: 'running',
@@ -71,7 +71,7 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
-          github.checks.create({
+          github.rest.checks.create({
             name: 'run tests',
             head_sha: '${{ needs.run-if-requested.outputs.sha }}',
             status: 'completed',
