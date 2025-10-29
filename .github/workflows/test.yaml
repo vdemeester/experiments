@@ -1,0 +1,47 @@
+name: tests
+
+on:
+  issue_comment:
+    types: [created, edited]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  run-if-requested:
+    if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, '/run-backcompat-e2e') }}
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set PR variables
+      id: pr
+      uses: actions/github-script@60a0d83039c74a4aee5e5cbf49f72e2045aa4292 # v7.0.1
+      with:
+        script: |
+          const pr = await github.rest.pulls.get({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            pull_number: context.issue.number
+          });
+          core.setOutput('sha', pr.data.head.sha);
+    outputs:
+      sha: ${{ steps.pr.outputs.sha }}
+
+  tests:
+    name: "tests"
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.24'
+
+    - name: Test
+      run: go test -v ./...
